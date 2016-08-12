@@ -35,7 +35,7 @@ public class LogHelper {
 
     private static final boolean DEBUG = true;
 
-    private static final int BUFFER_SIZE = 500;
+    private static final int BUFFER_SIZE = 100;
 
     private static LogHelper sInstance;
 
@@ -49,7 +49,7 @@ public class LogHelper {
     private boolean mEnableLogger = true;
     private boolean mUsingBuffer = false;
 
-    private long mLogInterval = Utilities.MINUTE * 5; // default 5 minutes
+    private long mLogInterval = Utilities.SECOND * 5; // default 5 minutes
 
     private int mMaximumLogFileCount = 5;
     private int mLogFileSize = 1024 * 1024;
@@ -114,11 +114,14 @@ public class LogHelper {
             }
         }
 
-        startToLog();
+        start();
     }
 
     private void log(LogInfo info) {
         mBuffer.add(info);
+        if (DEBUG) {
+            Log.d(TAG, "info: " + info);
+        }
         if (mBuffer.size() >= BUFFER_SIZE || !mUsingBuffer) {
             flushBuffer();
         }
@@ -133,7 +136,7 @@ public class LogHelper {
         }
     }
 
-    private void startToLog() {
+    private void start() {
         mHandler.removeCallbacks(mLogMemoryInfoRunnable);
         mHandler.post(mLogMemoryInfoRunnable);
     }
@@ -145,7 +148,7 @@ public class LogHelper {
     public void setEnableLogger(boolean enable) {
         mEnableLogger = enable;
         if (mEnableLogger) {
-            startToLog();
+            start();
         }
     }
 
